@@ -27,6 +27,9 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
         mbstring \
         bcmath
 
+# Usar configuración PHP de producción (zend.assertions=-1 evita AssertionError en Drush)
+RUN cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini
+
 # Configure Apache
 RUN a2enmod rewrite
 COPY apache.conf /etc/apache2/sites-available/000-default.conf
