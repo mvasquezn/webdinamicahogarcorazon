@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 
-DRUSH="/var/www/html/vendor/bin/drush"
 WEB_ROOT="/var/www/html/web"
+DRUSH="/var/www/html/vendor/bin/drush --root=$WEB_ROOT"
 
 # ── Resolver credenciales de DB ───────────────────────────────────────────────
 # Prioridad: MYSQL_URL (Railway) → DATABASE_URL → variables individuales (docker-compose)
