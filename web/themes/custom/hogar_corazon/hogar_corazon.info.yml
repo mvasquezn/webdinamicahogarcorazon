@@ -1,0 +1,22 @@
+name: Hogar de Corazón
+type: theme
+description: Tema personalizado para El Hogar de Corazón — institución de asistencia social para niñas y adolescentes.
+core_version_requirement: ^10 || ^11
+base theme: olivero
+
+libraries:
+  - hogar_corazon/global
+
+regions:
+  header: Header
+  primary_menu: Primary menu
+  secondary_menu: Secondary menu
+  breadcrumb: Breadcrumb
+  highlighted: Highlighted
+  help: Help
+  content: Content
+  sidebar_first: Sidebar first
+  footer_top: Footer top
+  footer_bottom: Footer bottom
+
+screenshot: screenshot.png

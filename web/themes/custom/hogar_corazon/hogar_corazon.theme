@@ -1,0 +1,32 @@
+<?php
+
+/**
+ * Theme functions for Hogar de Corazón.
+ */
+
+/**
+ * Adds urgency CSS class to table rows in Views for color-coding.
+ */
+function hogar_corazon_preprocess_views_view_table(array &$variables): void {
+  foreach ($variables['rows'] as &$row) {
+    $urgencia = $row['columns']['field_urgencia']['content'][0]['field_output']['#markup'] ?? '';
+    $estado   = $row['columns']['field_estado_nec']['content'][0]['field_output']['#markup'] ?? '';
+
+    $classes = [];
+    if (str_contains(strtolower($urgencia), 'alta'))  $classes[] = 'urgencia-alta';
+    if (str_contains(strtolower($urgencia), 'media')) $classes[] = 'urgencia-media';
+    if (str_contains(strtolower($urgencia), 'baja'))  $classes[] = 'urgencia-baja';
+    if (str_contains(strtolower($estado), 'cubierta')) $classes[] = 'estado-cubierta';
+
+    if ($classes) {
+      $row['attributes']->addClass($classes);
+    }
+  }
+}
+
+/**
+ * Adds CSS variables for urgency/estado badges to the page.
+ */
+function hogar_corazon_preprocess_html(array &$variables): void {
+  $variables['attributes']['class'][] = 'theme-hogar-corazon';
+}

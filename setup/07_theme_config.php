@@ -17,26 +17,15 @@ $config->getEditable('system.site')
   ->save();
 echo "✓ Configuración del sitio guardada.\n";
 
-// ── Install Olivero as default and Gin as admin theme ────────────────────────
-$theme_handler = \Drupal::service('theme_installer');
+// ── Install custom theme + admin theme ───────────────────────────────────────
+\Drupal::service('theme_installer')->install(['hogar_corazon', 'claro']);
 
-if (!\Drupal::service('theme_handler')->themeExists('gin')) {
-  echo "  (gin no instalado - usando claro como admin)\n";
-  $config->getEditable('system.theme')
-    ->set('default', 'olivero')
-    ->set('admin', 'claro')
-    ->save();
-} else {
-  $config->getEditable('system.theme')
-    ->set('default', 'olivero')
-    ->set('admin', 'gin')
-    ->save();
-}
-echo "✓ Tema frontend: olivero · Tema admin: claro/gin\n";
+$config->getEditable('system.theme')
+  ->set('default', 'hogar_corazon')
+  ->set('admin', 'claro')
+  ->save();
 
-// ── Enable olivero theme ─────────────────────────────────────────────────────
-\Drupal::service('theme_installer')->install(['olivero', 'claro']);
-echo "✓ Temas instalados.\n";
+echo "✓ Tema frontend: hogar_corazon · Tema admin: claro\n";
 
 // ── Pathauto patterns ─────────────────────────────────────────────────────────
 // Requires pathauto module (already enabled)

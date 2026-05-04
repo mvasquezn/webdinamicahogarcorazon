@@ -56,8 +56,9 @@ RUN COMPOSER_MEMORY_LIMIT=-1 composer require \
     drupal/views_bulk_operations \
     --no-interaction
 
-# Copy project files (settings, setup scripts, entrypoint)
+# Copy project files (settings, theme, setup scripts, entrypoint)
 COPY web/sites/default/settings.php        /var/www/html/web/sites/default/settings.php
+COPY web/themes/custom/                    /var/www/html/web/themes/custom/
 COPY setup/                                /var/www/html/setup/
 COPY docker-entrypoint.sh                  /usr/local/bin/docker-entrypoint.sh
 
