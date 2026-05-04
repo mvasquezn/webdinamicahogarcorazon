@@ -19,6 +19,30 @@
   --hc-rose:        #F4C6D7;
   --hc-cream:       #FFF8F5;
   --hc-text-dark:   #2D1B33;
+
+  /* ── CORRECCIÓN DE LAYOUT ────────────────────────────────────
+     Olivero reserva --content-left (90 px) para una barra social
+     vertical que no usamos. Al ponerla en 0 el header, el grid y
+     el contenido principal ocupan el ancho completo. */
+  --content-left: 0px;
+}
+
+/* Ocultar la social bar (columna izquierda vacía) */
+.social-bar {
+  display: none !important;
+}
+
+/* El header inner usaba 100vw - content-left; con content-left=0
+   ya es full-width, pero eliminamos el margen inline residual. */
+@media (min-width: 75rem) {
+  .site-header__inner {
+    margin-inline-start: 0 !important;
+  }
+
+  /* main-content era width: 100% - content-left; ahora es 100% */
+  .main-content {
+    width: 100% !important;
+  }
 }
 
 /* ── 2. Fondo general cremoso ────────────────────────────────── */
