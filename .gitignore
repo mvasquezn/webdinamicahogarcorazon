@@ -25,6 +25,11 @@
 .env.local
 .env.*.local
 
+# ── Screenshots / imágenes de referencia local (no van al repo ni a Railway) ──
+/*.png
+/*.jpg
+/*.jpeg
+
 # ── OS / editor artifacts ─────────────────────────────────────────────────────
 .DS_Store
 Thumbs.db

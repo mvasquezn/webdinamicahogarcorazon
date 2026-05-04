@@ -1,0 +1,27 @@
+# Screenshots y archivos de referencia visual — no necesarios en la imagen
+*.png
+*.jpg
+*.jpeg
+*.gif
+
+# Entorno local — Railway usa variables de entorno del dashboard
+.env
+.env.local
+.env.*.local
+
+# Composer lock y cache local — Railway usa el del repo
+.composer/
+
+# Overrides de docker-compose locales
+docker-compose.override.yml
+
+# Artefactos de IDE/OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs locales
+*.log

@@ -25,8 +25,16 @@ function hogar_corazon_preprocess_views_view_table(array &$variables): void {
 }
 
 /**
- * Adds CSS variables for urgency/estado badges to the page.
+ * Adds body class and overrides Olivero's inline HSL variables with our violet palette.
+ *
+ * Olivero injects --color--primary-hue/saturation/lightness as an inline style
+ * on <html> via its own preprocess_html hook. Inline styles beat :root CSS rules,
+ * so we must override them here, after Olivero's hook runs.
  */
 function hogar_corazon_preprocess_html(array &$variables): void {
   $variables['attributes']['class'][] = 'theme-hogar-corazon';
+  $variables['html_attributes']->setAttribute(
+    'style',
+    '--color--primary-hue:275;--color--primary-saturation:52%;--color--primary-lightness:38'
+  );
 }

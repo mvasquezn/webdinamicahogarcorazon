@@ -32,14 +32,23 @@
   display: none !important;
 }
 
-/* El header inner usaba 100vw - content-left; con content-left=0
-   ya es full-width, pero eliminamos el margen inline residual. */
-@media (min-width: 75rem) {
-  .site-header__inner {
-    margin-inline-start: 0 !important;
-  }
+/* Centrar el page-wrapper en monitores anchos.
+   Olivero no lo centra por defecto; sin margin: auto queda pegado a la izquierda
+   dejando un hueco en blanco a la derecha en pantallas > 1570 px. */
+.page-wrapper {
+  margin-inline: auto;
+}
 
-  /* main-content era width: 100% - content-left; ahora es 100% */
+/* El site-header__inner tiene width: 100vw (para cubrir el ancho completo incluyendo
+   la social-bar). Al ocultar la social-bar y centrar el page-wrapper, ese 100vw
+   desborda el contenedor. Lo fijamos a 100% del contenedor padre. */
+.site-header__inner {
+  width: 100% !important;
+  margin-inline-start: 0 !important;
+}
+
+/* main-content era width: 100% - content-left; con content-left=0 ya es 100% */
+@media (min-width: 75rem) {
   .main-content {
     width: 100% !important;
   }

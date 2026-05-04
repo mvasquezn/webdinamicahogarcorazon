@@ -3,10 +3,11 @@
 dockerfilePath = "Dockerfile"
 
 [deploy]
-# Health-check: wait for Apache to respond before marking deploy healthy
+# Health-check: el primer deploy corre site:install + 8 scripts de setup + descarga de imágenes.
+# 600 s da margen suficiente; deploys posteriores (solo updb+cr) tardan < 30 s.
 healthcheckPath    = "/inicio"
-healthcheckTimeout = 300        # seconds — first deploy runs site-install
+healthcheckTimeout = 600
 
 # Restart policy
-restartPolicyType  = "ON_FAILURE"
+restartPolicyType       = "ON_FAILURE"
 restartPolicyMaxRetries = 3

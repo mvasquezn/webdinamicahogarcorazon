@@ -27,6 +27,16 @@ $config->getEditable('system.theme')
 
 echo "✓ Tema frontend: hogar_corazon · Tema admin: claro\n";
 
+// ── Fix page title block placement ───────────────────────────────────────────
+// Olivero puts page_title_block in 'content_above'; our theme only has 'content'.
+// Moving it out of 'header' (where site:install places it) avoids it appearing
+// inside the navigation bar (encimado issue).
+$block_config = \Drupal::configFactory()->getEditable('block.block.hogar_corazon_page_title');
+if (!$block_config->isNew()) {
+  $block_config->set('region', 'content')->set('weight', -10)->save();
+  echo "✓ Bloque de título de página movido a la región 'content'.\n";
+}
+
 // ── Pathauto patterns ─────────────────────────────────────────────────────────
 // Requires pathauto module (already enabled)
 if (\Drupal::moduleHandler()->moduleExists('pathauto')) {

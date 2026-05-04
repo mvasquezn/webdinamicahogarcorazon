@@ -9,6 +9,10 @@ services:
       - drupal_files:/var/www/html/web/sites/default/files
       # Mount setup scripts for live edits during development
       - ./setup:/var/www/html/setup
+      # Mount custom theme for live edits (no image rebuild needed)
+      - ./web/themes/custom:/var/www/html/web/themes/custom
+      # Mount settings.php so it survives container recreates
+      - ./web/sites/default/settings.php:/var/www/html/web/sites/default/settings.php:ro
     env_file:
       - .env
     environment:
