@@ -5,24 +5,32 @@ DRUSH="/var/www/html/vendor/bin/drush"
 WEB_ROOT="/var/www/html/web"
 
 # ── Resolver credenciales de DB ───────────────────────────────────────────────
-# Railway inyecta MYSQL_URL; docker-compose usa variables individuales.
-if [ -n "$MYSQL_URL" ]; then
+# Prioridad: MYSQL_URL (Railway) → DATABASE_URL → variables individuales (docker-compose)
+DB_URL_SOURCE="${MYSQL_URL:-${DATABASE_URL:-}}"
+
+if [ -n "$DB_URL_SOURCE" ]; then
   # Parsear mysql://user:pass@host:port/dbname
-  DB_USER=$(echo "$MYSQL_URL" | sed -E 's|mysql://([^:]+):.*|\1|')
-  DB_PASSWORD=$(echo "$MYSQL_URL" | sed -E 's|mysql://[^:]+:([^@]+)@.*|\1|')
-  DB_HOST=$(echo "$MYSQL_URL" | sed -E 's|mysql://[^@]+@([^:/]+).*|\1|')
-  DB_PORT=$(echo "$MYSQL_URL" | sed -E 's|.*:([0-9]+)/.*|\1|')
-  DB_NAME=$(echo "$MYSQL_URL" | sed -E 's|.*/([^?]+).*|\1|')
+  DB_USER=$(echo "$DB_URL_SOURCE"     | sed -E 's|^[^:]+://([^:]+):.*|\1|')
+  DB_PASSWORD=$(echo "$DB_URL_SOURCE" | sed -E 's|^[^:]+://[^:]+:([^@]*)@.*|\1|')
+  DB_HOST=$(echo "$DB_URL_SOURCE"     | sed -E 's|^[^:]+://[^@]+@([^:/]+).*|\1|')
+  DB_PORT=$(echo "$DB_URL_SOURCE"     | sed -E 's|.*@[^:]+:([0-9]+)/.*|\1|')
+  DB_NAME=$(echo "$DB_URL_SOURCE"     | sed -E 's|.*/([^?]+)(\?.*)?$|\1|')
   DB_PORT="${DB_PORT:-3306}"
+  echo "[entrypoint] Using DB from URL: $DB_HOST:$DB_PORT/$DB_NAME"
 else
   DB_HOST="${DB_HOST:-db}"
   DB_PORT="${DB_PORT:-3306}"
+  DB_USER="${DB_USER:-drupal}"
+  DB_PASSWORD="${DB_PASSWORD:-drupal}"
+  DB_NAME="${DB_NAME:-drupal}"
+  echo "[entrypoint] Using DB from env vars: $DB_HOST:$DB_PORT/$DB_NAME"
 fi
 
-# ── Wait for MySQL ────────────────────────────────────────────────────────────
+# ── Wait for MySQL (TCP check — funciona con y sin SSL) ───────────────────────
 echo "[entrypoint] Waiting for MySQL at $DB_HOST:$DB_PORT..."
-until mysqladmin ping -h"$DB_HOST" -P"$DB_PORT" -u"${DB_USER:-drupal}" -p"${DB_PASSWORD:-drupal}" --silent 2>/dev/null; do
-  sleep 2
+until (echo > /dev/tcp/"$DB_HOST"/"$DB_PORT") 2>/dev/null; do
+  echo "[entrypoint] MySQL not ready yet, retrying..."
+  sleep 3
 done
 echo "[entrypoint] MySQL ready."
 
@@ -44,10 +52,10 @@ if $DRUSH status --field=bootstrap 2>/dev/null | grep -q "Successful"; then
 else
   echo "[entrypoint] First deploy — installing Drupal..."
 
-  DB_URL="mysql://${DB_USER:-drupal}:${DB_PASSWORD:-drupal}@${DB_HOST:-db}:${DB_PORT:-3306}/${DB_NAME:-drupal}"
+  INSTALL_DB_URL="mysql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}"
 
   $DRUSH site:install standard \
-    --db-url="$DB_URL" \
+    --db-url="$INSTALL_DB_URL" \
     --site-name="${DRUPAL_SITE_NAME:-El Hogar de Corazón}" \
     --site-mail="${DRUPAL_SITE_MAIL:-admin@hogarcorazon.org}" \
     --account-name="${DRUPAL_ADMIN_USER:-admin}" \
