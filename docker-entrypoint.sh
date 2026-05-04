@@ -4,10 +4,22 @@ set -e
 DRUSH="/var/www/html/vendor/bin/drush"
 WEB_ROOT="/var/www/html/web"
 
-# ── Wait for MySQL ────────────────────────────────────────────────────────────
-DB_HOST="${DB_HOST:-db}"
-DB_PORT="${DB_PORT:-3306}"
+# ── Resolver credenciales de DB ───────────────────────────────────────────────
+# Railway inyecta MYSQL_URL; docker-compose usa variables individuales.
+if [ -n "$MYSQL_URL" ]; then
+  # Parsear mysql://user:pass@host:port/dbname
+  DB_USER=$(echo "$MYSQL_URL" | sed -E 's|mysql://([^:]+):.*|\1|')
+  DB_PASSWORD=$(echo "$MYSQL_URL" | sed -E 's|mysql://[^:]+:([^@]+)@.*|\1|')
+  DB_HOST=$(echo "$MYSQL_URL" | sed -E 's|mysql://[^@]+@([^:/]+).*|\1|')
+  DB_PORT=$(echo "$MYSQL_URL" | sed -E 's|.*:([0-9]+)/.*|\1|')
+  DB_NAME=$(echo "$MYSQL_URL" | sed -E 's|.*/([^?]+).*|\1|')
+  DB_PORT="${DB_PORT:-3306}"
+else
+  DB_HOST="${DB_HOST:-db}"
+  DB_PORT="${DB_PORT:-3306}"
+fi
 
+# ── Wait for MySQL ────────────────────────────────────────────────────────────
 echo "[entrypoint] Waiting for MySQL at $DB_HOST:$DB_PORT..."
 until mysqladmin ping -h"$DB_HOST" -P"$DB_PORT" -u"${DB_USER:-drupal}" -p"${DB_PASSWORD:-drupal}" --silent 2>/dev/null; do
   sleep 2
