@@ -1,0 +1,12 @@
+[build]
+# Railway builds from the Dockerfile in the root
+dockerfilePath = "Dockerfile"
+
+[deploy]
+# Health-check: wait for Apache to respond before marking deploy healthy
+healthcheckPath    = "/inicio"
+healthcheckTimeout = 300        # seconds — first deploy runs site-install
+
+# Restart policy
+restartPolicyType  = "ON_FAILURE"
+restartPolicyMaxRetries = 3

@@ -1,0 +1,41 @@
+# ── Drupal core / vendor ──────────────────────────────────────────────────────
+/vendor/
+/web/core/
+/web/modules/contrib/
+/web/themes/contrib/
+/web/profiles/contrib/
+/web/libraries/
+
+# ── Drupal files (user uploads, cache, private files) ─────────────────────────
+/web/sites/default/files/
+/web/sites/*/files/
+/web/sites/*/private/
+
+# ── Drupal settings ───────────────────────────────────────────────────────────
+# settings.php reads from env vars — safe to commit
+!/web/sites/default/settings.php
+/web/sites/default/settings.local.php   # local overrides — git-ignored
+/web/sites/default/services.yml
+
+# ── Environment / secrets ─────────────────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+
+# ── OS / editor artifacts ─────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/
+
+# ── Logs ──────────────────────────────────────────────────────────────────────
+*.log
+/web/sites/default/files/php/
+
+# ── Composer cache ────────────────────────────────────────────────────────────
+/composer.phar
+
+# ── Docker local override ─────────────────────────────────────────────────────
+docker-compose.override.yml
