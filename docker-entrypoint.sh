@@ -54,6 +54,29 @@ else
     $DRUSH php:script "$script"
   done
 
+  echo "[entrypoint] Downloading demo images..."
+  IMG_DIR="$WEB_ROOT/sites/default/files/hogar-images"
+  mkdir -p "$IMG_DIR"
+  BASE="https://images.unsplash.com"
+  declare -A IMGS=(
+    [hero.jpg]="photo-1488521787991-ed7bbaae773c?w=1400&h=550&fit=crop&q=80"
+    [quienes-somos.jpg]="photo-1529390079861-591de354faf5?w=900&h=500&fit=crop&q=80"
+    [educacion.jpg]="photo-1497633762265-9d179a990aa6?w=700&h=450&fit=crop&q=80"
+    [salud.jpg]="photo-1559839734-2b71ea197ec2?w=700&h=450&fit=crop&q=80"
+    [arte.jpg]="photo-1452860606245-08befc0ff44b?w=700&h=450&fit=crop&q=80"
+    [vocacional.jpg]="photo-1523240795612-9a054b0db644?w=700&h=450&fit=crop&q=80"
+    [testimonio-lucia.jpg]="photo-1445205170230-053b83016050?w=800&h=500&fit=crop&q=80"
+    [donativo-uniformes.jpg]="photo-1532629345422-7515f3d16bb6?w=800&h=500&fit=crop&q=80"
+    [taller-pintura.jpg]="photo-1560807707-8cc77767d783?w=800&h=500&fit=crop&q=80"
+    [transparencia.jpg]="photo-1554224155-6726b3ff858f?w=900&h=400&fit=crop&q=80"
+    [como-ayudar.jpg]="photo-1593113598332-cd288d649433?w=900&h=400&fit=crop&q=80"
+    [contacto.jpg]="photo-1516321318423-f06f85e504b3?w=900&h=400&fit=crop&q=80"
+  )
+  for NAME in "${!IMGS[@]}"; do
+    curl -sL "${BASE}/${IMGS[$NAME]}" -o "$IMG_DIR/$NAME" || true
+  done
+  chown -R www-data:www-data "$IMG_DIR"
+
   $DRUSH cr
   echo "[entrypoint] Installation complete."
 fi

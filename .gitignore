@@ -11,6 +11,9 @@
 /web/sites/*/files/
 /web/sites/*/private/
 
+# ── Demo images (descargadas en entrypoint, no en repo) ───────────────────────
+# Las imágenes se descargan via docker-entrypoint.sh en el primer deploy.
+
 # ── Drupal settings ───────────────────────────────────────────────────────────
 # settings.php reads from env vars — safe to commit
 !/web/sites/default/settings.php
