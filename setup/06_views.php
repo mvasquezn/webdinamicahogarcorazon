@@ -199,4 +199,164 @@ if (!view_exists('mis_donaciones')) {
   echo "✓ Vista 'mis_donaciones' creada.\n";
 }
 
+// ═══════════════════════════════════════════════════════════════════
+// VIEW: Gestión de Necesidades (área interna)
+// ═══════════════════════════════════════════════════════════════════
+if (!view_exists('gestion_necesidades')) {
+  $view = View::create([
+    'id'         => 'gestion_necesidades',
+    'label'      => 'Gestión de Necesidades',
+    'base_table' => 'node_field_data',
+    'status'     => TRUE,
+    'display' => [
+      'default' => [
+        'display_plugin' => 'default',
+        'id'             => 'default',
+        'display_title'  => 'Default',
+        'position'       => 0,
+        'display_options' => [
+          'title' => 'Gestión de Necesidades',
+          'fields' => [
+            'title' => [
+              'id' => 'title', 'table' => 'node_field_data', 'field' => 'title',
+              'label' => 'Necesidad', 'alter' => ['make_link' => TRUE], 'plugin_id' => 'field',
+            ],
+            'field_categoria_necesidad' => [
+              'id' => 'field_categoria_necesidad', 'table' => 'node__field_categoria_necesidad',
+              'field' => 'field_categoria_necesidad', 'label' => 'Categoría', 'plugin_id' => 'field',
+            ],
+            'field_urgencia' => [
+              'id' => 'field_urgencia', 'table' => 'node__field_urgencia',
+              'field' => 'field_urgencia', 'label' => 'Urgencia', 'plugin_id' => 'field',
+            ],
+            'field_cantidad' => [
+              'id' => 'field_cantidad', 'table' => 'node__field_cantidad',
+              'field' => 'field_cantidad', 'label' => 'Cantidad', 'plugin_id' => 'field',
+            ],
+            'field_estado_nec' => [
+              'id' => 'field_estado_nec', 'table' => 'node__field_estado_nec',
+              'field' => 'field_estado_nec', 'label' => 'Estado', 'plugin_id' => 'field',
+            ],
+            'edit_node' => [
+              'id' => 'edit_node', 'table' => 'views', 'field' => 'edit_node',
+              'label' => '', 'plugin_id' => 'node_link_edit',
+            ],
+          ],
+          'filters' => [
+            'status' => [
+              'id' => 'status', 'table' => 'node_field_data', 'field' => 'status',
+              'value' => '1', 'plugin_id' => 'boolean',
+            ],
+            'type' => [
+              'id' => 'type', 'table' => 'node_field_data', 'field' => 'type',
+              'value' => ['necesidad' => 'necesidad'], 'plugin_id' => 'bundle',
+            ],
+          ],
+          'sorts' => [
+            'field_urgencia_value' => [
+              'id' => 'field_urgencia_value', 'table' => 'node__field_urgencia',
+              'field' => 'field_urgencia_value', 'order' => 'ASC', 'plugin_id' => 'standard',
+            ],
+          ],
+          'access' => ['type' => 'role', 'options' => ['role' => [
+            'personal_interno' => 'personal_interno',
+            'director'         => 'director',
+            'administrator'    => 'administrator',
+          ]]],
+          'style'        => ['type' => 'table'],
+          'row'          => ['type' => 'fields'],
+          'pager'        => ['type' => 'full', 'options' => ['items_per_page' => 25]],
+          'exposed_form' => ['type' => 'basic'],
+          'use_more'     => FALSE,
+        ],
+      ],
+      'page_interna' => [
+        'display_plugin' => 'page',
+        'id'             => 'page_interna',
+        'display_title'  => 'Página Interna',
+        'position'       => 1,
+        'display_options' => ['path' => 'interno/necesidades'],
+      ],
+    ],
+  ]);
+  $view->save();
+  echo "✓ Vista 'gestion_necesidades' creada → /interno/necesidades\n";
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// VIEW: Gestión de Benefactores (área interna — base: usuarios)
+// ═══════════════════════════════════════════════════════════════════
+if (!view_exists('gestion_benefactores')) {
+  $view = View::create([
+    'id'         => 'gestion_benefactores',
+    'label'      => 'Gestión de Benefactores',
+    'base_table' => 'users_field_data',
+    'status'     => TRUE,
+    'display' => [
+      'default' => [
+        'display_plugin' => 'default',
+        'id'             => 'default',
+        'display_title'  => 'Default',
+        'position'       => 0,
+        'display_options' => [
+          'title' => 'Gestión de Benefactores',
+          'fields' => [
+            'name' => [
+              'id' => 'name', 'table' => 'users_field_data', 'field' => 'name',
+              'label' => 'Usuario', 'plugin_id' => 'field',
+            ],
+            'mail' => [
+              'id' => 'mail', 'table' => 'users_field_data', 'field' => 'mail',
+              'label' => 'Correo electrónico', 'plugin_id' => 'field',
+            ],
+            'created' => [
+              'id' => 'created', 'table' => 'users_field_data', 'field' => 'created',
+              'label' => 'Registrado', 'plugin_id' => 'date',
+              'date_format' => 'short',
+            ],
+            'status' => [
+              'id' => 'status', 'table' => 'users_field_data', 'field' => 'status',
+              'label' => 'Activo', 'plugin_id' => 'boolean',
+            ],
+            'edit_user' => [
+              'id' => 'edit_user', 'table' => 'views', 'field' => 'edit_user',
+              'label' => '', 'plugin_id' => 'user_link_edit',
+            ],
+          ],
+          'filters' => [
+            'roles_target_id' => [
+              'id' => 'roles_target_id', 'table' => 'user__roles', 'field' => 'roles_target_id',
+              'value' => ['benefactor' => 'benefactor'], 'plugin_id' => 'user_roles',
+            ],
+          ],
+          'sorts' => [
+            'created' => [
+              'id' => 'created', 'table' => 'users_field_data',
+              'field' => 'created', 'order' => 'DESC', 'plugin_id' => 'date',
+            ],
+          ],
+          'access' => ['type' => 'role', 'options' => ['role' => [
+            'personal_interno' => 'personal_interno',
+            'director'         => 'director',
+            'administrator'    => 'administrator',
+          ]]],
+          'style'    => ['type' => 'table'],
+          'row'      => ['type' => 'fields'],
+          'pager'    => ['type' => 'full', 'options' => ['items_per_page' => 25]],
+          'use_more' => FALSE,
+        ],
+      ],
+      'page_interna' => [
+        'display_plugin' => 'page',
+        'id'             => 'page_interna',
+        'display_title'  => 'Página Interna',
+        'position'       => 1,
+        'display_options' => ['path' => 'interno/benefactores'],
+      ],
+    ],
+  ]);
+  $view->save();
+  echo "✓ Vista 'gestion_benefactores' creada → /interno/benefactores\n";
+}
+
 echo "\n✓ Vistas configuradas.\n";

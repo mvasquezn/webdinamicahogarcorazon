@@ -118,6 +118,44 @@ create_page('Registro de Benefactor', '/registro-benefactor',
    <a href="/user/register" class="button button--primary">Crear cuenta de Benefactor</a>');
 
 // ═══════════════════════════════════════════════════════════════════
+// PÁGINAS ÁREA BENEFACTORES
+// ═══════════════════════════════════════════════════════════════════
+echo "── Creando páginas área benefactores ──\n";
+
+create_page('Portal del Benefactor', '/benefactor/panel',
+  '<h2>Bienvenido al portal de benefactores</h2>
+   <p>Gracias por ser parte de El Hogar de Corazón. Desde aquí puedes explorar las necesidades actuales de nuestras niñas y registrar tus compromisos de donación.</p>
+   <ul>
+     <li><a href="/benefactor/necesidades">Catálogo de necesidades</a> — Explora qué necesitan las niñas</li>
+     <li><a href="/benefactor/mis-donaciones">Mis donaciones</a> — Revisa tus compromisos registrados</li>
+   </ul>');
+
+create_page('Registrar compromiso de donación', '/benefactor/comprometerse',
+  '<h2>Comprometerse con una donación</h2>
+   <p>Para registrar tu compromiso de donación a una necesidad específica:</p>
+   <ol>
+     <li>Visita el <a href="/benefactor/necesidades">catálogo de necesidades</a>.</li>
+     <li>Selecciona la necesidad que deseas cubrir y revisa sus detalles.</li>
+     <li>Haz clic en <strong>Crear donación</strong> en la página de la necesidad.</li>
+   </ol>
+   <p>También puedes registrar directamente una donación en efectivo o en especie:</p>
+   <a href="/node/add/donacion" class="button button--primary">Registrar donación</a>');
+
+// ═══════════════════════════════════════════════════════════════════
+// PÁGINAS ÁREA INTERNA
+// ═══════════════════════════════════════════════════════════════════
+echo "── Creando páginas área interna ──\n";
+
+create_page('Reportes internos', '/interno/reportes',
+  '<h2>Centro de reportes</h2>
+   <p>Panel central para el equipo de El Hogar de Corazón.</p>
+   <ul>
+     <li><a href="/interno/ninas">Gestión de niñas</a> — Altas, salidas y bajas de expedientes</li>
+     <li><a href="/interno/necesidades">Gestión de necesidades</a> — Crear, editar y cerrar necesidades</li>
+     <li><a href="/interno/benefactores">Gestión de benefactores</a> — Alta, aprobación y bloqueo de cuentas</li>
+   </ul>');
+
+// ═══════════════════════════════════════════════════════════════════
 // MENÚ PRINCIPAL
 // ═══════════════════════════════════════════════════════════════════
 echo "── Configurando menú principal ──\n";
