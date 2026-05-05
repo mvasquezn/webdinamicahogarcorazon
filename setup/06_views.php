@@ -166,19 +166,39 @@ if (!view_exists('mis_donaciones')) {
         'display_options' => [
           'title' => 'Mis Donaciones',
           'fields' => [
-            'title'                  => ['id' => 'title', 'table' => 'node_field_data', 'field' => 'title', 'label' => 'Donación', 'plugin_id' => 'field'],
-            'field_fecha_compromiso' => ['id' => 'field_fecha_compromiso', 'table' => 'node__field_fecha_compromiso', 'field' => 'field_fecha_compromiso_value', 'label' => 'Fecha compromiso', 'plugin_id' => 'field'],
-            'field_estado_don'       => ['id' => 'field_estado_don', 'table' => 'node__field_estado_don', 'field' => 'field_estado_don_value', 'label' => 'Estado', 'plugin_id' => 'field'],
+            'title' => [
+              'id' => 'title', 'table' => 'node_field_data', 'field' => 'title',
+              'label' => 'Donación', 'plugin_id' => 'field',
+              'alter' => ['make_link' => TRUE],
+            ],
+            'field_fecha_compromiso' => [
+              'id' => 'field_fecha_compromiso', 'table' => 'node__field_fecha_compromiso',
+              'field' => 'field_fecha_compromiso_value', 'label' => 'Fecha compromiso',
+              'plugin_id' => 'field', 'alter' => [],
+            ],
+            'field_estado_don' => [
+              'id' => 'field_estado_don', 'table' => 'node__field_estado_don',
+              'field' => 'field_estado_don_value', 'label' => 'Estado',
+              'plugin_id' => 'field', 'alter' => [],
+            ],
           ],
           'filters' => [
             'status' => ['id' => 'status', 'table' => 'node_field_data', 'field' => 'status', 'value' => '1', 'plugin_id' => 'boolean'],
             'type'   => ['id' => 'type', 'table' => 'node_field_data', 'field' => 'type', 'value' => ['donacion' => 'donacion'], 'plugin_id' => 'bundle'],
+          ],
+          // Contextual argument: filtra por el UID del usuario actual.
+          // ***CURRENT_USER*** como valor numérico no funciona en Drupal 11;
+          // el approach correcto es default_argument_type => current_user.
+          'arguments' => [
             'field_benefactor_ref_target_id' => [
-              'id' => 'field_benefactor_ref_target_id', 'table' => 'node__field_benefactor_ref',
-              'field' => 'field_benefactor_ref_target_id',
-              'relationship' => 'none',
-              'value' => ['value' => '***CURRENT_USER***'],
-              'plugin_id' => 'numeric',
+              'id'                    => 'field_benefactor_ref_target_id',
+              'table'                 => 'node__field_benefactor_ref',
+              'field'                 => 'field_benefactor_ref_target_id',
+              'plugin_id'             => 'numeric',
+              'default_action'        => 'default',
+              'default_argument_type' => 'current_user',
+              'validate'              => ['type' => 'none', 'fail' => 'ignore'],
+              'alter'                 => [],
             ],
           ],
           'access' => ['type' => 'role', 'options' => ['role' => ['benefactor' => 'benefactor', 'administrator' => 'administrator']]],
