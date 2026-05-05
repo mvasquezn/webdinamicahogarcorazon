@@ -166,6 +166,142 @@ foreach ($noticias as [$titulo, $alias, $body]) {
   echo "  + Noticia: $titulo\n";
 }
 
+// ═══════════════════════════════════════════════════════════════════
+// DATOS EXTRA — Nuevas características del mapa del sitio
+// ═══════════════════════════════════════════════════════════════════
+
+// ── Benefactores adicionales (para probar Gestión de benefactores) ────────────
+echo "── Creando benefactores adicionales ──\n";
+
+// Benefactor nuevo sin donaciones, para probar la vista vacía
+$existing_ana = \Drupal::entityTypeManager()->getStorage('user')->loadByProperties(['name' => 'ana_nueva']);
+if (!$existing_ana) {
+  $benef4 = User::create([
+    'name'   => 'ana_nueva',
+    'mail'   => 'ana@voluntaria.mx',
+    'pass'   => 'Benef2024!',
+    'status' => 1,
+    'roles'  => ['benefactor'],
+  ]);
+  $benef4->save();
+  echo "  + Usuario 'ana_nueva' (benefactor, activa, sin donaciones)\n";
+} else {
+  $benef4 = reset($existing_ana);
+}
+
+// Benefactor bloqueado (para probar el flujo de bloqueo)
+$existing_pedro = \Drupal::entityTypeManager()->getStorage('user')->loadByProperties(['name' => 'pedro_bloqueado']);
+if (!$existing_pedro) {
+  $benef_b = User::create([
+    'name'   => 'pedro_bloqueado',
+    'mail'   => 'pedro@exbenefactor.mx',
+    'pass'   => 'Benef2024!',
+    'status' => 0,
+    'roles'  => ['benefactor'],
+  ]);
+  $benef_b->save();
+  $benef_b_id = $benef_b->id();
+  echo "  + Usuario 'pedro_bloqueado' (benefactor, BLOQUEADO)\n";
+} else {
+  $benef_b = reset($existing_pedro);
+  $benef_b_id = $benef_b->id();
+}
+
+// ── Necesidades adicionales (para llenar Gestión de necesidades) ──────────────
+echo "── Creando necesidades adicionales ──\n";
+
+$nec_extra = [
+  // Alimentación (categoría no cubierta antes)
+  ['Leche en polvo 3 meses — Emilia',      'alimentacion', 'EXP-010', 'alta',  'abierta',      6],
+  ['Fruta fresca semanal (canasta básica)', 'alimentacion', 'EXP-009', 'media', 'comprometida', 4],
+  ['Suplemento nutricional — Natalia',     'alimentacion', 'EXP-008', 'alta',  'cubierta',     3],
+  // Electrónico (categoría no cubierta antes)
+  ['Tablet para clases en línea — Camila', 'electronico',  'EXP-003', 'alta',  'abierta',      1],
+  ['Audífonos con micrófono — Renata',     'electronico',  'EXP-009', 'media', 'abierta',      1],
+  // Otros
+  ['Juguetes educativos — Natalia',        'otro',         'EXP-008', 'baja',  'abierta',      5],
+  ['Cobija individual — Daniela',          'ropa',         'EXP-007', 'media', 'cubierta',     1],
+  ['Diccionario de español — Camila',      'libros',       'EXP-003', 'baja',  'abierta',      1],
+  ['Higiene dental kit × 5 — Isabella',   'higiene',      'EXP-004', 'alta',  'comprometida', 5],
+];
+
+$nec_extra_ids = [];
+foreach ($nec_extra as [$titulo, $cat, $nina_exp, $urgencia, $estado, $cantidad]) {
+  $node = Node::create([
+    'type'                      => 'necesidad',
+    'title'                     => $titulo,
+    'status'                    => 1,
+    'field_categoria_necesidad' => $cat,
+    'field_nina_ref'            => ['target_id' => $nina_ids[$nina_exp]],
+    'field_urgencia'            => $urgencia,
+    'field_estado_nec'          => $estado,
+    'field_cantidad'            => $cantidad,
+    'body'                      => ['value' => "Necesidad extra para niña con expediente $nina_exp. Estado: $estado.", 'format' => 'basic_html'],
+  ]);
+  $node->save();
+  $nec_extra_ids[] = $node->id();
+  echo "  + Necesidad extra: $titulo\n";
+}
+
+// ── Donaciones adicionales (estados cancelada + ciclos completos) ─────────────
+echo "── Creando donaciones adicionales ──\n";
+
+// Donación cancelada por pedro_bloqueado (para que la gestión de benefactores tenga historial)
+Node::create([
+  'type'                   => 'donacion',
+  'title'                  => 'Donación cancelada — pedro_bloqueado',
+  'status'                 => 1,
+  'field_necesidad_ref'    => ['target_id' => $nec_extra_ids[0]],
+  'field_benefactor_ref'   => ['target_id' => $benef_b_id],
+  'field_fecha_compromiso' => ['value' => '2025-03-01'],
+  'field_fecha_entrega'    => [],
+  'field_estado_don'       => 'cancelado',
+  'field_notas_don'        => ['value' => 'El benefactor canceló sin justificación. Cuenta suspendida.', 'format' => 'plain_text'],
+])->save();
+echo "  + Donación cancelada (pedro_bloqueado)\n";
+
+// Donación entregada de ana_nueva (reciente, para mostrar historial limpio)
+Node::create([
+  'type'                   => 'donacion',
+  'title'                  => 'Donación tablet — Camila',
+  'status'                 => 1,
+  'field_necesidad_ref'    => ['target_id' => $nec_extra_ids[3]],
+  'field_benefactor_ref'   => ['target_id' => $benef4->id()],
+  'field_fecha_compromiso' => ['value' => '2025-04-28'],
+  'field_fecha_entrega'    => ['value' => '2025-05-02'],
+  'field_estado_don'       => 'entregado',
+  'field_notas_don'        => ['value' => 'Tablet entregada con funda protectora incluida.', 'format' => 'plain_text'],
+])->save();
+echo "  + Donación entregada (ana_nueva → tablet Camila)\n";
+
+// Donación pendiente reciente de maria_lopez (para llenar Mis donaciones)
+Node::create([
+  'type'                   => 'donacion',
+  'title'                  => 'Donación leche — Emilia',
+  'status'                 => 1,
+  'field_necesidad_ref'    => ['target_id' => $nec_extra_ids[0]],
+  'field_benefactor_ref'   => ['target_id' => $benef2->id()],
+  'field_fecha_compromiso' => ['value' => '2025-05-03'],
+  'field_fecha_entrega'    => [],
+  'field_estado_don'       => 'pendiente',
+  'field_notas_don'        => ['value' => 'Entrega acordada para el 10 de mayo.', 'format' => 'plain_text'],
+])->save();
+echo "  + Donación pendiente (maria_lopez → leche Emilia)\n";
+
+// Donación comprometida de corp_ayuda (para reportes)
+Node::create([
+  'type'                   => 'donacion',
+  'title'                  => 'Kit dental × 5 — Isabella',
+  'status'                 => 1,
+  'field_necesidad_ref'    => ['target_id' => $nec_extra_ids[8]],
+  'field_benefactor_ref'   => ['target_id' => $benef3->id()],
+  'field_fecha_compromiso' => ['value' => '2025-05-04'],
+  'field_fecha_entrega'    => [],
+  'field_estado_don'       => 'pendiente',
+  'field_notas_don'        => ['value' => 'CorpAyuda donará el kit dental completo.', 'format' => 'plain_text'],
+])->save();
+echo "  + Donación pendiente (corp_ayuda → kit dental Isabella)\n";
+
 echo "\n✓ Contenido demo creado.\n";
 echo "\n── Credenciales de acceso ──────────────────────────\n";
 echo "  Administrador:   admin / Admin2024!\n";
@@ -174,4 +310,6 @@ echo "  Personal interno:mayra / Mayra2024!\n";
 echo "  Benefactor 1:    juan_garcia / Benef2024!\n";
 echo "  Benefactor 2:    maria_lopez / Benef2024!\n";
 echo "  Benefactor 3:    corp_ayuda  / Benef2024!\n";
+echo "  Benefactor 4:    ana_nueva   / Benef2024!  (sin donaciones)\n";
+echo "  Bloqueado:       pedro_bloqueado / Benef2024! (cuenta bloqueada)\n";
 echo "────────────────────────────────────────────────────\n";
