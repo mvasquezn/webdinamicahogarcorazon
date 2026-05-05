@@ -44,6 +44,10 @@ RUN COMPOSER_MEMORY_LIMIT=-1 composer create-project drupal/recommended-project:
 # Install Drush
 RUN COMPOSER_MEMORY_LIMIT=-1 composer require drush/drush --no-interaction
 
+# System-level Drush config — sets root+uri BEFORE CLI options are parsed,
+# fixing EmptyBoot TypeError in BootstrapManager::refineUriSelection().
+RUN mkdir -p /etc/drush && printf 'options:\n  root: /var/www/html/web\n  uri: http://localhost\n' > /etc/drush/drush.yml
+
 # Install contrib modules (D11 compatible)
 RUN COMPOSER_MEMORY_LIMIT=-1 composer require \
     drupal/admin_toolbar \

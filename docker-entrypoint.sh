@@ -2,7 +2,7 @@
 set -e
 
 WEB_ROOT="/var/www/html/web"
-DRUSH="/var/www/html/vendor/bin/drush --root=$WEB_ROOT"
+DRUSH="/var/www/html/vendor/bin/drush --root=$WEB_ROOT --uri=http://localhost"
 
 # ── Resolver credenciales de DB ───────────────────────────────────────────────
 # Prioridad: MYSQL_URL (Railway) → DATABASE_URL → variables individuales (docker-compose)
