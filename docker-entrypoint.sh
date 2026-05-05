@@ -43,7 +43,8 @@ chmod -R 755 "$WEB_ROOT/sites/default/files"
 mkdir -p /var/www/html/config/sync
 
 # ── Install or update Drupal ──────────────────────────────────────────────────
-cd /var/www/html
+# DrupalFinder auto-detects the root from cwd; must be the web root, not the composer root.
+cd "$WEB_ROOT"
 
 if $DRUSH status --field=bootstrap 2>/dev/null | grep -q "Successful"; then
   echo "[entrypoint] Drupal already installed — running updates..."

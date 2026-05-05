@@ -46,7 +46,10 @@ RUN COMPOSER_MEMORY_LIMIT=-1 composer require drush/drush --no-interaction
 
 # System-level Drush config — sets root+uri BEFORE CLI options are parsed,
 # fixing EmptyBoot TypeError in BootstrapManager::refineUriSelection().
-RUN mkdir -p /etc/drush && printf 'options:\n  root: /var/www/html/web\n  uri: http://localhost\n' > /etc/drush/drush.yml
+RUN mkdir -p /etc/drush \
+    && echo "options:" > /etc/drush/drush.yml \
+    && echo "  root: /var/www/html/web" >> /etc/drush/drush.yml \
+    && echo "  uri: http://localhost" >> /etc/drush/drush.yml
 
 # Install contrib modules (D11 compatible)
 RUN COMPOSER_MEMORY_LIMIT=-1 composer require \
